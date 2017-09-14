@@ -12,6 +12,10 @@ module RailsBeforeRender
   ###
 
   def render *args
+    return performed? ? nil : super(*args) if @_was_in_render
+
+    @_was_in_render = true
+
     self.class.ancestors.each do |klass|
       filters = @@before_render[klass.to_s] || next
       filters.each do |filter|
@@ -25,4 +29,4 @@ module RailsBeforeRender
   end
 end
 
-AbstractController::Base.send :include, RailsBeforeRender
+ActionController::Base.send :include, RailsBeforeRender
