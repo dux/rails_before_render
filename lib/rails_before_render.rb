@@ -1,11 +1,11 @@
 module RailsBeforeRender
-  @@before_render ||= {}
+  @@_before_render ||= {}
 
   def self.included base
-    def base.before_render &block
+    def base.before_render_filter &block
       klass = self.to_s
-      @@before_render[klass] ||= []
-      @@before_render[klass].push block
+      @@_before_render[klass] ||= []
+      @@_before_render[klass].push block
     end
   end
 
@@ -17,7 +17,7 @@ module RailsBeforeRender
     @_was_in_render = true
 
     self.class.ancestors.each do |klass|
-      filters = @@before_render[klass.to_s] || next
+      filters = @@_before_render[klass.to_s] || next
       filters.each do |filter|
         # do not run if render or redirect is called
         instance_exec &filter unless performed?
