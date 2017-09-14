@@ -23,7 +23,7 @@ We will add filter that will dump @product to json
 class AppllicationController
 
   before_render do
-    if Rails.env.development && params[:debug]
+    if Rails.env.development? && params[:debug]
       render json: @product.to_h if @product
     end
   end
