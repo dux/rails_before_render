@@ -15,7 +15,7 @@ module RailsBeforeRender
     self.class.ancestors.each do |klass|
       filters = @@before_render[klass.to_s] || next
       filters.each do |filter|
-        # do not run id render or redirect is called
+        # do not run if render or redirect is called
         instance_exec &filter unless performed?
       end
     end

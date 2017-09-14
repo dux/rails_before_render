@@ -8,7 +8,7 @@ Bypasses Rails filtering mechanism to ensure simplicity and compatibility with R
 
 Gemfile
 
-`gem 'rails_before_filter'`
+`gem 'rails_before_render'`
 
 
 ### Example
