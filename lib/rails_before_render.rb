@@ -1,24 +1,30 @@
+require 'digest'
+
 module RailsBeforeRender
   @@_before_render ||= {}
 
   def self.included base
     def base.before_render_filter &block
       klass = self.to_s
-      @@_before_render[klass] ||= []
-      @@_before_render[klass].push block
+      key   = Digest::MD5.hexdigest(caller[0])
+
+      @@_before_render[klass]    ||= {}
+      @@_before_render[klass][key] = block
     end
   end
 
   ###
 
   def render *args
-    return performed? ? nil : super(*args) if @_was_in_render
-
-    @_was_in_render = true
+    if @_was_in_render
+      return performed? ? nil : super(*args)
+    else
+      @_was_in_render = true
+    end
 
     self.class.ancestors.each do |klass|
       filters = @@_before_render[klass.to_s] || next
-      filters.each do |filter|
+      filters.values.each do |filter|
         # do not run if render or redirect is called
         instance_exec &filter unless performed?
       end
